@@ -14,10 +14,8 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label">نوع الحيوان</label>
-                <select asp-for="Name" class="form-control" asp-items="ViewBag.AnimalTypes">
-                    <option value="">-- اختر النوع --</option>
-                </select>
+                <label asp-for="Name" class="control-label">نوع الحيوان (مثل: خروف، بقرة)</label>
+                <input asp-for="Name" class="form-control" placeholder="اكتب النوع هنا..." id="NameInput" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -52,5 +50,48 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // نراقب خانة الإدخال النصي لنوع الحيوان
+            // استخدمنا 'input' ليعمل التحديث أثناء الكتابة أو 'blur' عند الانتهاء
+            $('#NameInput').on('blur', function () {
+                var typedText = $(this).val(); // النص الذي كتبه المستخدم
+                var barnSelect = $('#BarnId'); // قائمة الحظائر
+
+                if (typedText.length > 0) {
+                    // تنظيف القائمة وإظهار رسالة جاري التحميل
+                    barnSelect.empty();
+                    barnSelect.append('<option value="">-- جاري البحث عن حظائر مناسبة... --</option>');
+
+                    // طلب الحظائر من الكنترولر بناءً على النص المكتوب
+                    $.ajax({
+                        url: '@Url.Action("GetBarnsByKind", "Animals")',
+                        type: 'GET',
+                        data: { kind: typedText },
+                        success: function (data) {
+                            barnSelect.empty();
+                            if (data.length > 0) {
+                                barnSelect.append('<option value="">-- اختر حظيرة مناسبة --</option>');
+                                $.each(data, function (i, barn) {
+                                    barnSelect.append('<option value="' + barn.id + '">' + barn.name + '</option>');
+                                });
+                            } else {
+                                barnSelect.append('<option value="">لا توجد حظائر مخصصة لـ (' + typedText + ')</option>');
+                            }
+                        },
+                        error: function () {
+                            console.error("خطأ في الاتصال بالسيرفر");
+                            barnSelect.empty();
+                            barnSelect.append('<option value="">حدث خطأ أثناء تحميل البيانات</option>');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Farm_management.Data;
 using Farm_management.Models;
+using Farm_management.Services;
 
 namespace Farm_management.Controllers
 {
@@ -49,12 +50,17 @@ namespace Farm_management.Controllers
         [HttpGet]
         public JsonResult GetBarnsByKind(string kind)
         {
-            var filteredBarns = _context.Barns
-                .Where(b => b.kindOfLife == kind)
+            // جلب كل الحظائر ثم فلترتها باستخدام محرك الذكاء الخاص بنا
+            var allBarns = _context.Barns.ToList();
+
+            var filteredBarns = allBarns
+                .Where(b => TextHelper.IsSimilar(kind, b.kindOfLife, maxErrors: 1)) // فحص ذكي
                 .Select(b => new { id = b.Id, name = b.Name })
                 .ToList();
+
             return Json(filteredBarns);
         }
+
         // GET: Animals/Create
         public IActionResult Create()
         {
@@ -72,23 +78,37 @@ namespace Farm_management.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Species,Age,Gender,BarnId")] Animals animals)
         {
+            // جلب كل الأنواع المتاحة في الحظائر حالياً (خروف، بقرة، إلخ)
+            var existingKinds = await _context.Barns.Select(b => b.kindOfLife).Distinct().ToListAsync();
+
+            // --- بداية التعامل الذكي مع النص ---
+            foreach (var kind in existingKinds)
+            {
+                // إذا كانت الكلمة المدخلة قريبة جداً من نوع موجود (خطأ بحرف واحد مثلاً)
+                if (TextHelper.IsSimilar(animals.Name, kind, maxErrors: 1))
+                {
+                    animals.Name = kind; // تصحيح تلقائي للنص
+                    break;
+                }
+            }
+            // --- نهاية التعامل الذكي ---
+
+            // الكود السابق الخاص بفحص السعة والنوع يكمل عمله هنا...
             var selectedBarn = await _context.Barns
                 .Include(b => b.Animals)
                 .FirstOrDefaultAsync(b => b.Id == animals.BarnId);
 
             if (selectedBarn != null)
             {
-                // 1. فحص النوع
                 if (selectedBarn.kindOfLife != animals.Name)
                 {
-                    ModelState.AddModelError("Name", "نوع الحيوان لا يطابق تخصص الحظيرة.");
+                    ModelState.AddModelError("Name", $"هذا الحيوان لا يناسب هذه الحظيرة. هل تقصد {selectedBarn.kindOfLife}؟");
                 }
 
-                // 2. فحص المساحة (السعة)
                 int currentCount = selectedBarn.Animals?.Count ?? 0;
                 if (currentCount >= selectedBarn.Capacity)
                 {
-                    ModelState.AddModelError("BarnId", $"الحظيرة ممتلئة ({currentCount}/{selectedBarn.Capacity})");
+                    ModelState.AddModelError("BarnId", "الحظيرة ممتلئة.");
                 }
             }
 
@@ -99,11 +119,11 @@ namespace Farm_management.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // إعادة بناء القوائم في حال الفشل
-            ViewData["AnimalTypes"] = new SelectList(_context.Barns.Select(b => b.kindOfLife).Distinct(), animals.Name);
-            ViewData["BarnId"] = new SelectList(_context.Barns.Where(b => b.kindOfLife == animals.Name), "Id", "Name", animals.BarnId);
+            // إعادة تعبئة القوائم في حال الخطأ
+            ViewData["BarnId"] = new SelectList(_context.Barns, "Id", "Name", animals.BarnId);
             return View(animals);
         }
+
         // GET: Animals/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
