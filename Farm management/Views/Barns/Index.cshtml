@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Farm_management.Models.Barns>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>اسم الحظيرة</th>
+            <th>التخصص (نوع الحياة)</th>
+            <th>عدد الحيوانات الحالي (الحالي/السعة)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.kindOfLife</td>
+                <td>
+                    @{
+                        // حساب العدد الحالي
+                        var currentCount = item.Animals?.Count ?? 0;
+                        // تحديد لون التنبيه: أحمر إذا امتلات، أخضر إذا كانت متاحة
+                        var badgeClass = currentCount >= item.Capacity ? "badge bg-danger" : "badge bg-success";
+                    }
+                    <span class="@badgeClass" style="font-size: 1rem;">
+                        @currentCount / @item.Capacity
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">تعديل</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">تفاصيل</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
