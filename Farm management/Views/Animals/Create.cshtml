@@ -50,5 +50,45 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @* 1. استدعاء ملفات التحقق الجاهزة *@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @* 2. كود الفلترة الذكية *@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // نراقب التغيير في خانة اسم الحيوان (النوع)
+            $('#Name').change(function () {
+                var selectedKind = $(this).val();
+                var barnSelect = $('#BarnId');
+
+                // تنظيف القائمة الحالية
+                barnSelect.empty();
+                barnSelect.append('<option value="">-- جاري التحميل... --</option>');
+
+                if (selectedKind) {
+                    $.ajax({
+                        url: '@Url.Action("GetBarnsByKind", "Animals")',
+                        type: 'GET',
+                        data: { kind: selectedKind },
+                        success: function (data) {
+                            barnSelect.empty();
+                            barnSelect.append('<option value="">-- اختر حظيرة مناسبة --</option>');
+                            $.each(data, function (i, barn) {
+                                barnSelect.append('<option value="' + barn.id + '">' + barn.name + '</option>');
+                            });
+                        },
+                        error: function () {
+                            alert('حدث خطأ أثناء جلب الحظائر');
+                        }
+                    });
+                } else {
+                    barnSelect.empty();
+                    barnSelect.append('<option value="">-- اختر النوع أولاً --</option>');
+                }
+            });
+        });
+    </script>
 }

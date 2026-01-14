@@ -46,17 +46,23 @@ namespace Farm_management.Controllers
         }
 
         // GET: Animals/Create
+        [HttpGet]
+        public JsonResult GetBarnsByKind(string kind)
+        {
+            var filteredBarns = _context.Barns
+                .Where(b => b.kindOfLife == kind)
+                .Select(b => new { id = b.Id, name = b.Name })
+                .ToList();
+            return Json(filteredBarns);
+        }
         // GET: Animals/Create
         public IActionResult Create()
         {
-            // جلب أنواع الحظائر بدون تكرار (مثلاً: أبقار، أغنام)
-            var availableKinds = _context.Barns
-                .Select(b => b.kindOfLife)
-                .Distinct()
-                .ToList();
-
+            var availableKinds = _context.Barns.Select(b => b.kindOfLife).Distinct().ToList();
             ViewData["AnimalTypes"] = new SelectList(availableKinds);
-            ViewData["BarnId"] = new SelectList(_context.Barns, "Id", "Name");
+
+            // في البداية، نرسل قائمة حظائر فارغة أو نطلب من المستخدم اختيار النوع أولاً
+            ViewData["BarnId"] = new SelectList(Enumerable.Empty<SelectListItem>());
             return View();
         }
         // POST: Animals/Create
@@ -66,11 +72,24 @@ namespace Farm_management.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Species,Age,Gender,BarnId")] Animals animals)
         {
-            var selectedBarn = await _context.Barns.FindAsync(animals.BarnId);
+            var selectedBarn = await _context.Barns
+                .Include(b => b.Animals)
+                .FirstOrDefaultAsync(b => b.Id == animals.BarnId);
 
-            if (selectedBarn != null && selectedBarn.kindOfLife != animals.Name)
+            if (selectedBarn != null)
             {
-                ModelState.AddModelError("BarnId", $"خطأ: الحظيرة المختارة مخصصة لـ ({selectedBarn.kindOfLife})، بينما الحيوان نوعه ({animals.Name}).");
+                // 1. فحص النوع
+                if (selectedBarn.kindOfLife != animals.Name)
+                {
+                    ModelState.AddModelError("Name", "نوع الحيوان لا يطابق تخصص الحظيرة.");
+                }
+
+                // 2. فحص المساحة (السعة)
+                int currentCount = selectedBarn.Animals?.Count ?? 0;
+                if (currentCount >= selectedBarn.Capacity)
+                {
+                    ModelState.AddModelError("BarnId", $"الحظيرة ممتلئة ({currentCount}/{selectedBarn.Capacity})");
+                }
             }
 
             if (ModelState.IsValid)
@@ -80,10 +99,9 @@ namespace Farm_management.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // إعادة بناء القوائم في حال فشل التحقق
-            var availableKinds = _context.Barns.Select(b => b.kindOfLife).Distinct().ToList();
-            ViewData["AnimalTypes"] = new SelectList(availableKinds, animals.Name);
-            ViewData["BarnId"] = new SelectList(_context.Barns, "Id", "Name", animals.BarnId);
+            // إعادة بناء القوائم في حال الفشل
+            ViewData["AnimalTypes"] = new SelectList(_context.Barns.Select(b => b.kindOfLife).Distinct(), animals.Name);
+            ViewData["BarnId"] = new SelectList(_context.Barns.Where(b => b.kindOfLife == animals.Name), "Id", "Name", animals.BarnId);
             return View(animals);
         }
         // GET: Animals/Edit/5
