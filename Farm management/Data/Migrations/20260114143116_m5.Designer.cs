@@ -4,6 +4,7 @@ using Farm_management.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Farm_management.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260114143116_m5")]
+    partial class m5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,38 +80,6 @@ namespace Farm_management.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Barns");
-                });
-
-            modelBuilder.Entity("Farm_management.Models.Feeding", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BarnId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FoodType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MealTimesJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MealsCount")
-                        .HasColumnType("int");
-
-                    b.Property<double>("SingleMealWeight")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BarnId");
-
-                    b.ToTable("Feeding");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -317,17 +288,6 @@ namespace Farm_management.Data.Migrations
                 {
                     b.HasOne("Farm_management.Models.Barns", "Barn")
                         .WithMany("Animals")
-                        .HasForeignKey("BarnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Barn");
-                });
-
-            modelBuilder.Entity("Farm_management.Models.Feeding", b =>
-                {
-                    b.HasOne("Farm_management.Models.Barns", "Barn")
-                        .WithMany()
                         .HasForeignKey("BarnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

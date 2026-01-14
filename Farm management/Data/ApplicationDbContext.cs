@@ -12,5 +12,6 @@ namespace Farm_management.Data
         }
         public DbSet<Farm_management.Models.Barns> Barns { get; set; } = default!;
         public DbSet<Farm_management.Models.Animals> Animals { get; set; } = default!;
+        public DbSet<Farm_management.Models.Feeding> Feeding { get; set; }
     }
 }

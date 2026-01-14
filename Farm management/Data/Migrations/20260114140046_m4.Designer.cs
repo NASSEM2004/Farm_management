@@ -4,6 +4,7 @@ using Farm_management.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Farm_management.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260114140046_m4")]
+    partial class m4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,22 +90,21 @@ namespace Farm_management.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AnimalsCount")
+                        .HasColumnType("int");
+
                     b.Property<int>("BarnId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("FeedingTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("FoodQuantity")
+                        .HasColumnType("float");
 
                     b.Property<string>("FoodType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MealTimesJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MealsCount")
-                        .HasColumnType("int");
-
-                    b.Property<double>("SingleMealWeight")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

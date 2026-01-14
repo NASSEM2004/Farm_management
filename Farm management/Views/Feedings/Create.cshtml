@@ -1,0 +1,107 @@
+﻿@model Farm_management.Models.Feeding
+
+@{
+    ViewData["Title"] = "إضافة جدول تغذية";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white p-3">
+            <h4 class="mb-0"><i class="bi bi-plus-square-fill me-2"></i>إعداد نظام تغذية جديد</h4>
+        </div>
+        <div class="card-body bg-light">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label asp-for="BarnId" class="form-label fw-bold">الحظيرة</label>
+                        <select asp-for="BarnId" class="form-select border-primary" asp-items="ViewBag.BarnId">
+                            <option value="">-- اختر الحظيرة --</option>
+                        </select>
+                        <span asp-validation-for="BarnId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="FoodType" class="form-label fw-bold">نوع العلف</label>
+                        <input asp-for="FoodType" class="form-control border-primary" placeholder="مثلاً: حبوب، برسيم..." />
+                        <span asp-validation-for="FoodType" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="SingleMealWeight" class="form-label fw-bold">وزن الوجبة الواحدة (كجم)</label>
+                        <input asp-for="SingleMealWeight" class="form-control border-primary" type="number" step="0.1" placeholder="مثلاً: 5.5" />
+                        <span asp-validation-for="SingleMealWeight" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-white rounded shadow-sm border-start border-4 border-warning">
+                            <label asp-for="MealsCount" class="form-label fw-bold text-dark">عدد الوجبات اليومية</label>
+                            <input type="number" id="MealsCountInput" asp-for="MealsCount" class="form-control form-control-lg" min="1" max="6" value="1" />
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="alert alert-info mb-0 py-2">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            سيتم تطبيق الوزن المدخل أعلاه على كل وجبة تظهر بالأسفل.
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <h5 class="text-secondary mb-3"><i class="bi bi-clock-fill me-2"></i>تحديد مواعيد الوجبات</h5>
+
+                <div id="MealsTimesContainer" class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card p-3 border-info shadow-sm text-center">
+                            <label class="fw-bold text-info mb-2">وجبة رقم 1</label>
+                            <input type="time" name="mealTimes" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4 text-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 me-2">إلغاء</a>
+                    <button type="submit" class="btn btn-success btn-lg px-5 shadow">حفظ البيانات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // كود مراقبة تغيير عدد الوجبات
+            $('#MealsCountInput').on('input change', function () {
+                var count = parseInt($(this).val());
+
+                // حماية المدخلات
+                if (count > 6) { count = 6; $(this).val(6); }
+                if (count < 1 || isNaN(count)) { count = 1; $(this).val(1); }
+
+                var container = $('#MealsTimesContainer');
+                container.empty(); // مسح الخانات السابقة
+
+                // توليد الخانات الجديدة بناءً على العدد
+                for (var i = 1; i <= count; i++) {
+                    var html = `
+                        <div class="col-md-4 mb-3">
+                            <div class="card p-3 border-info shadow-sm text-center animate__animated animate__fadeIn">
+                                <label class="fw-bold text-info mb-2">وجبة رقم ${i}</label>
+                                <input type="time" name="mealTimes" class="form-control" required />
+                            </div>
+                        </div>
+                    `;
+                    container.append(html);
+                }
+            });
+        });
+    </script>
+}
