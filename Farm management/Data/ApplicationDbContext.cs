@@ -10,35 +10,50 @@ namespace Farm_management.Data
             : base(options)
         {
         }
+
         public DbSet<Farm_management.Models.Barns> Barns { get; set; } = default!;
         public DbSet<Farm_management.Models.Animals> Animals { get; set; } = default!;
         public DbSet<Farm_management.Models.Feeding> Feeding { get; set; }
         public DbSet<Hatchery> Hatcheries { get; set; }
+
+        // إضافة جدول العيادة
+        public DbSet<Clinic> Clinics { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // تعطيل الحذف المتسلسل للذكر لتجنب التعارض
+            // 1. تعطيل الحذف المتسلسل لقسم التفريخ (Hatchery)
             modelBuilder.Entity<Hatchery>()
                 .HasOne(h => h.MaleAnimal)
                 .WithMany()
                 .HasForeignKey(h => h.MaleAnimalId)
-                .OnDelete(DeleteBehavior.NoAction); // هذا هو السطر السحري
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // تعطيل الحذف المتسلسل للأنثى لتجنب التعارض
             modelBuilder.Entity<Hatchery>()
                 .HasOne(h => h.FemaleAnimal)
                 .WithMany()
                 .HasForeignKey(h => h.FemaleAnimalId)
-                .OnDelete(DeleteBehavior.NoAction); // وهذا أيضاً
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // يمكنك إبقاء الحظيرة كما هي أو جعلها NoAction أيضاً للأمان
             modelBuilder.Entity<Hatchery>()
                 .HasOne(h => h.ProductionBarn)
                 .WithMany()
                 .HasForeignKey(h => h.ProductionBarnId)
                 .OnDelete(DeleteBehavior.NoAction);
-        }
 
+            // 2. تعطيل الحذف المتسلسل لقسم العيادة (Clinic)
+            modelBuilder.Entity<Clinic>()
+                .HasOne(c => c.Animal)
+                .WithMany()
+                .HasForeignKey(c => c.AnimalId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Clinic>()
+                .HasOne(c => c.Barn)
+                .WithMany()
+                .HasForeignKey(c => c.BarnId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }
