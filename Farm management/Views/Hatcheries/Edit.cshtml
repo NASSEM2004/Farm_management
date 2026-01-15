@@ -1,0 +1,53 @@
+﻿@model Farm_management.Models.Hatchery
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Hatchery</h4>
+<hr />
+<div class="row">
+    <div class="card border-0 shadow-sm p-4 bg-light">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-primary">الذكر (رقم الحيوان)</label>
+                <div class="input-group">
+                    <input asp-for="MaleAnimalId" class="form-control bg-white" readonly />
+                    <a id="btnLinkMale" asp-controller="Animals" asp-action="Details" asp-route-id="@Model.MaleAnimalId" class="btn btn-primary">
+                        <i class="bi bi-search"></i> التفاصيل
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-danger">الأنثى (رقم الحيوان)</label>
+                <div class="input-group">
+                    <input asp-for="FemaleAnimalId" class="form-control bg-white" readonly />
+                    <a id="btnLinkFemale" asp-controller="Animals" asp-action="Details" asp-route-id="@Model.FemaleAnimalId" class="btn btn-danger">
+                        <i class="bi bi-search"></i> التفاصيل
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="ProductionBarnId" class="form-label fw-bold">حظيرة الإنتاج</label>
+                <select asp-for="ProductionBarnId" class="form-select border-2" asp-items="ViewBag.ProductionBarnId"></select>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="StartDate" class="form-label fw-bold">وقت الإدخال</label>
+                <input asp-for="StartDate" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <label asp-for="ExpectedEndDate" class="form-label fw-bold">موعد الإنتاج المتوقع</label>
+                <input asp-for="ExpectedEndDate" class="form-control fw-bold text-success" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

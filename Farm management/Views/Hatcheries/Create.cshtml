@@ -1,0 +1,128 @@
+﻿@model Farm_management.Models.Hatchery
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-dark text-white">
+            <h4><i class="bi bi-egg-fried text-warning"></i> إنشاء عملية تفريخ جديدة</h4>
+        </div>
+        <div class="card-body bg-light">
+            <form asp-action="Create" id="hatcheryForm">
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">اختر حظيرة الآباء</label>
+                        <select id="parentBarnSelect" class="form-select" asp-items="ViewBag.ParentBarns">
+                            <option value="">-- حدد الحظيرة لجلب الحيوانات --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">تخصص الحظيرة (نوع الحياة)</label>
+                        <input type="text" id="kindOfLifeInput" class="form-control form-select-lg bg-white" readonly placeholder="سيظهر التخصص هنا..." />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-primary mb-3">
+                            <div class="card-header bg-primary text-white">الذكور المتاحة</div>
+                            <div class="table-responsive" style="max-height: 300px;">
+                                <table class="table table-sm table-hover" id="maleTable">
+                                    <thead><tr><th>إختيار</th><th>#</th><th>الفصيلة</th><th>العمر</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card border-danger mb-3">
+                            <div class="card-header bg-danger text-white">الإناث المتاحة</div>
+                            <div class="table-responsive" style="max-height: 300px;">
+                                <table class="table table-sm table-hover" id="femaleTable">
+                                    <thead><tr><th>إختيار</th><th>#</th><th>الفصيلة</th><th>العمر</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4 p-3 bg-white rounded shadow-sm">
+                    <div class="col-md-4">
+                        <label asp-for="ProductionBarnId" class="form-label fw-bold">حظيرة الإنتاج المستهدفة</label>
+                        <select asp-for="ProductionBarnId" class="form-select" asp-items="ViewBag.ProductionBarnId"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="StartDate" class="form-label fw-bold">تاريخ الإدخال</label>
+                        <input asp-for="StartDate" class="form-control" type="datetime-local" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="ExpectedEndDate" class="form-label fw-bold">موعد الإنتاج المتوقع</label>
+                        <input asp-for="ExpectedEndDate" class="form-control" type="datetime-local" />
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success btn-lg px-5">حفظ العملية</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#parentBarnSelect').change(function () {
+                var barnId = $(this).val();
+
+                if (!barnId) {
+                    $('#kindOfLifeInput').val('');
+                    return;
+                }
+
+                console.log("جاري جلب بيانات الحظيرة رقم: " + barnId);
+
+                $.ajax({
+                    url: '/Hatcheries/GetAnimalsByBarn', // تأكد من اسم الكنترولر هنا
+                    type: 'GET',
+                    data: { barnId: barnId },
+                    success: function (response) {
+                        if (response) {
+                            // 1. عرض تخصص الحظيرة
+                            $('#kindOfLifeInput').val(response.specialization);
+
+                            // 2. توزيع الحيوانات
+                            var maleBody = $('#maleTable tbody').empty();
+                            var femaleBody = $('#femaleTable tbody').empty();
+
+                            if (response.animals.length === 0) {
+                                alert("هذه الحظيرة فارغة، لا توجد حيوانات لعرضها.");
+                            }
+
+                            response.animals.forEach(function (animal) {
+                                var row = `<tr>
+                                    <td><input type="radio" name="${animal.gender === 'ذكر' ? 'MaleAnimalId' : 'FemaleAnimalId'}" value="${animal.id}" required /></td>
+                                    <td>${animal.id}</td>
+                                    <td>${animal.species}</td>
+                                    <td>${animal.age}</td>
+                                </tr>`;
+
+                                if (animal.gender === 'ذكر') {
+                                    maleBody.append(row);
+                                } else {
+                                    femaleBody.append(row);
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("خطأ في الاتصال: " + error);
+                        alert("حدث خطأ أثناء جلب البيانات، تأكد من مسار الكنترولر.");
+                    }
+                });
+            });
+        });
+    </script>
+}

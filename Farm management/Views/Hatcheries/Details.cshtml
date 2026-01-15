@@ -1,0 +1,48 @@
+﻿@model Farm_management.Models.Hatchery
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Hatchery</h4>
+    <hr />
+    <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white">بيانات الأبوين</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><strong>الذكر:</strong> @Model.MaleAnimal?.Species (#@Model.MaleAnimalId)</span>
+                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@Model.MaleAnimalId" class="btn btn-sm btn-primary">
+                            <i class="bi bi-eye"></i> تفاصيل الحيوان
+                        </a>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><strong>الأنثى:</strong> @Model.FemaleAnimal?.Species (#@Model.FemaleAnimalId)</span>
+                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@Model.FemaleAnimalId" class="btn btn-sm btn-danger">
+                            <i class="bi bi-eye"></i> تفاصيل الحيوان
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-secondary text-white">بيانات الإنتاج والتواريخ</div>
+                <div class="card-body">
+                    <p><strong>حظيرة الإنتاج:</strong> <span class="badge bg-info text-dark">@Model.ProductionBarn?.Name</span></p>
+                    <p><strong>تاريخ الإدخال:</strong> <span class="text-muted">@Model.StartDate.ToString("yyyy/MM/dd HH:mm")</span></p>
+                    <p><strong>موعد الإنتاج المتوقع:</strong> <span class="text-success fw-bold">@Model.ExpectedEndDate.ToString("yyyy/MM/dd HH:mm")</span></p>
+                    <p><strong>الحالة الحالية:</strong> <span class="badge bg-warning text-dark">@Model.Status</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
