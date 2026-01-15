@@ -33,19 +33,16 @@ namespace Farm_management.Controllers
         // GET: Barns/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var barns = await _context.Barns
+            // إضافة Include(b => b.Animals) ضرورية جداً هنا
+            var barn = await _context.Barns
+                .Include(b => b.Animals)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (barns == null)
-            {
-                return NotFound();
-            }
 
-            return View(barns);
+            if (barn == null) return NotFound();
+
+            return View(barn);
         }
 
         // GET: Barns/Create
@@ -71,6 +68,7 @@ namespace Farm_management.Controllers
         }
 
         // GET: Barns/Edit/5
+        // GET: Barns/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,7 +76,11 @@ namespace Farm_management.Controllers
                 return NotFound();
             }
 
-            var barns = await _context.Barns.FindAsync(id);
+            // التعديل هنا: أضفنا Include(b => b.Animals)
+            var barns = await _context.Barns
+                .Include(b => b.Animals)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (barns == null)
             {
                 return NotFound();

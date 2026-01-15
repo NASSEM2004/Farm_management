@@ -34,3 +34,58 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<hr />
+<div class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-dark fw-bold">
+            <i class="bi bi-grid-3x3-gap-fill text-primary"></i> الحيوانات المقيمة حالياً
+        </h4>
+        <span class="badge bg-secondary">إجمالي العدد: @Model.Animals.Count</span>
+    </div>
+
+    <div class="row">
+        @foreach (var animal in Model.Animals)
+        {
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 shadow-sm border-0 hover-card">
+                    <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between">
+                        <span class="badge bg-dark"># @animal.Id</span>
+                        <span class="text-muted small"><i class="bi bi-gender-ambiguous"></i> @animal.Gender</span>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-1 text-primary">@animal.Name</h5>
+                        <p class="card-text mb-1"><strong>النوع:</strong> @animal.Species</p>
+                        <p class="card-text text-muted"><strong>العمر:</strong> @animal.Age شهر</p>
+                    </div>
+
+                    <div class="card-footer bg-light border-0 d-flex justify-content-around py-3">
+                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@animal.Id"
+                           class="btn btn-sm btn-outline-info" title="عرض">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a asp-controller="Animals" asp-action="Edit" asp-route-id="@animal.Id"
+                           class="btn btn-sm btn-outline-warning" title="تعديل">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-controller="Animals" asp-action="Delete" asp-route-id="@animal.Id"
+                           class="btn btn-sm btn-outline-danger" title="حذف">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+</style>

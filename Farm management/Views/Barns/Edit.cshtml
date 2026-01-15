@@ -39,6 +39,59 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<hr />
+<div class="mt-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-table me-2"></i> قائمة الحيوانات في هذه الحظيرة</h5>
+            <span class="badge bg-light text-dark">العدد الإجمالي: @Model.Animals.Count</span>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 10%"># الرقم</th>
+                        <th>الاسم</th>
+                        <th>النوع</th>
+                        <th>الجنس</th>
+                        <th>العمر (شهر)</th>
+                        <th class="text-center">إدارة الحيوان</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var animal in Model.Animals)
+                    {
+                        <tr>
+                            <td><span class="fw-bold">@animal.Id</span></td>
+                            <td>@animal.Name</td>
+                            <td><span class="badge bg-info text-dark">@animal.Species</span></td>
+                            <td>@animal.Gender</td>
+                            <td>@animal.Age</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a asp-controller="Animals" asp-action="Edit" asp-route-id="@animal.Id"
+                                       class="btn btn-sm btn-outline-warning" title="تعديل">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a asp-controller="Animals" asp-action="Details" asp-route-id="@animal.Id"
+                                       class="btn btn-sm btn-outline-primary" title="عرض">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="mt-3">
+        <p class="text-muted small">
+            <i class="bi bi-info-circle"></i> لتغيير حظيرة حيوان معين، يرجى الضغط على زر التعديل الخاص بالحيوان.
+        </p>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
