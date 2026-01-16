@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "لوحة التحكم المركزية";
+    // يتم استدعاء الـ Layout الافتراضي الذي يحتوي على الناف بار العام للمشروع
+}
+
+@* @section Styles {
+    <link rel="stylesheet" href="~/css/dashboard_style.css" />
+} *@
+<style>
+    /* إلغاء تأثير الهوفر (اللون الذي يتغير عند مرور الماوس) */
+    .btn-no-hover:hover {
+        background-color: #212529 !important; /* يحافظ على لون الـ btn-dark */
+        border-color: #212529 !important;
+        cursor: default; /* اختياري: لجعل السهم لا يتغير ليد */
+    }
+
+    .btn-danger.btn-no-hover:hover {
+        background-color: #bb2d3b !important; /* يحافظ على لون العيادة الأحمر */
+    }
+</style>
+
+<div class="container-fluid mt-3" style="direction: rtl;">
+    <div class="row">
+        <main class="col-md-10 px-4">
+            <div id="filter-container" class="mb-3 p-3 bg-white rounded shadow-sm d-flex gap-2 border">
+                <span id="filter-status" class="text-muted small">الفلاتر: </span>
+                <div id="dynamic-filters"></div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0" id="main-data-table">
+                        <thead id="table-head" class="table-dark">
+                            <tr><th>يرجى اختيار قسم...</th></tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <aside class="col-md-2 border-start bg-light p-3" style="min-height: 80vh;">
+            <h6 class="text-center mb-4 border-bottom pb-2">الأقسام</h6>
+            <div class="d-grid gap-2">
+                <button onclick="mainOrchestrator('barns')" class="btn btn-dark w-100 mb-2 text-center">
+                    الحظائر
+                </button>
+
+                <button onclick="mainOrchestrator('animals')" class="btn btn-dark w-100 mb-2 text-center">
+                    الحيوانات
+                </button>
+
+                <button onclick="mainOrchestrator('hatchery')" class="btn btn-dark w-100 mb-2 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-egg-fried me-2"></i>
+                    <span>قسم التفريخ</span>
+                </button>
+            </div>
+        </aside>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/farm_filters.js"></script>
+
+    <script src="~/js/ui_controller.js"></script>
+}
