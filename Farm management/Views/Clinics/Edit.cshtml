@@ -1,74 +1,115 @@
 ﻿@model Farm_management.Models.Clinic
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "تعديل سجل طبي";
 }
 
-<h1>Edit</h1>
+<style>
+    body {
+        background-image: url('/css/images/imge20.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
 
-<h4>Clinic</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="AnimalId" class="control-label"></label>
-                <select asp-for="AnimalId" class="form-control" asp-items="ViewBag.AnimalId"></select>
-                <span asp-validation-for="AnimalId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Diagnosis" class="control-label"></label>
-                <input asp-for="Diagnosis" class="form-control" />
-                <span asp-validation-for="Diagnosis" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Details" class="control-label"></label>
-                <input asp-for="Details" class="form-control" />
-                <span asp-validation-for="Details" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Medications" class="control-label"></label>
-                <input asp-for="Medications" class="form-control" />
-                <span asp-validation-for="Medications" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DoseFrequency" class="control-label"></label>
-                <input asp-for="DoseFrequency" class="form-control" />
-                <span asp-validation-for="DoseFrequency" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EntryDate" class="control-label"></label>
-                <input asp-for="EntryDate" class="form-control" />
-                <span asp-validation-for="EntryDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BarnId" class="control-label"></label>
-                <select asp-for="BarnId" class="form-control" asp-items="ViewBag.BarnId"></select>
-                <span asp-validation-for="BarnId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    .main-container {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        padding: 25px;
+    }
+</style>
+
+<div class="container mt-4 main-container">
+    <div class="card shadow-lg border-0">
+        @* الهيدر باللون الأصفر لعملية التعديل *@
+        <div class="card-header bg-warning text-dark p-3">
+            <h4 class="mb-0"><i class="bi bi-capsule me-2"></i> تعديل بيانات الحالة الطبية - سجل رقم #@Model.Id</h4>
+        </div>
+
+        <div class="card-body bg-light">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                @* القسم الأول: تحديد الحيوان والمكان *@
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="AnimalId" class="form-label fw-bold">الحيوان المصاب</label>
+                        <select asp-for="AnimalId" class="form-select border-warning shadow-sm" asp-items="ViewBag.AnimalId"></select>
+                        <span asp-validation-for="AnimalId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="BarnId" class="form-label fw-bold">الحظيرة (مكان العزل)</label>
+                        <select asp-for="BarnId" class="form-select border-warning shadow-sm" asp-items="ViewBag.BarnId"></select>
+                        <span asp-validation-for="BarnId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                @* القسم الثاني: التشخيص والعلاج (مربعات نصية بارزة) *@
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-white rounded shadow-sm border-start border-4 border-danger">
+                            <label asp-for="Diagnosis" class="form-label fw-bold text-danger">التشخيص الطبي</label>
+                            <input asp-for="Diagnosis" class="form-control border-danger" placeholder="مثلاً: التهاب رئوي، كسر..." />
+                            <span asp-validation-for="Diagnosis" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-white rounded shadow-sm border-start border-4 border-primary">
+                            <label asp-for="Medications" class="form-label fw-bold text-primary">العلاجات والأدوية</label>
+                            <input asp-for="Medications" class="form-control border-primary" placeholder="اسم الدواء والجرعة..." />
+                            <span asp-validation-for="Medications" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                @* القسم الثالث: التفاصيل والجرعات *@
+                <div class="row mb-4">
+                    <div class="col-md-8 mb-3">
+                        <label asp-for="Details" class="form-label fw-bold">ملاحظات إضافية عن الحالة</label>
+                        <input asp-for="Details" class="form-control border-warning shadow-sm" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="DoseFrequency" class="form-label fw-bold">تكرار الجرعة (يومياً)</label>
+                        <input asp-for="DoseFrequency" class="form-control border-warning shadow-sm text-center fw-bold" placeholder="مثلاً: 3 مرات" />
+                    </div>
+                </div>
+
+                @* القسم الرابع: التواريخ والحالة *@
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="EntryDate" class="form-label fw-bold text-secondary">تاريخ الدخول للعيادة</label>
+                        <input asp-for="EntryDate" class="form-control border-warning shadow-sm" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="EndDate" class="form-label fw-bold text-success">تاريخ الخروج المتوقع</label>
+                        <input asp-for="EndDate" class="form-control border-warning shadow-sm" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Status" class="form-label fw-bold">حالة المريض</label>
+                        <select asp-for="Status" class="form-select border-warning shadow-sm fw-bold">
+                            <option value="قيد العلاج">قيد العلاج</option>
+                            <option value="مستقرة">مستقرة</option>
+                            <option value="حرجة">حرجة</option>
+                            <option value="تعافى">تعافى</option>
+                        </select>
+                    </div>
+                </div>
+
+                @* الأزرار *@
+                <div class="form-group mt-4 text-end border-top pt-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 me-2">إلغاء</a>
+                    <button type="submit" class="btn btn-warning btn-lg px-5 shadow fw-bold">تحديث البيانات الطبية</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,48 +1,107 @@
 ﻿@model Farm_management.Models.Hatchery
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "تفاصيل عملية التفريخ";
 }
 
-<h1>Details</h1>
+<style>
+    body {
+        background-image: url('/css/images/imge15.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
 
-<div>
-    <h4>Hatchery</h4>
-    <hr />
-    <div class="row mt-4">
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-dark text-white">بيانات الأبوين</div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span><strong>الذكر:</strong> @Model.MaleAnimal?.Species (#@Model.MaleAnimalId)</span>
-                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@Model.MaleAnimalId" class="btn btn-sm btn-primary">
-                            <i class="bi bi-eye"></i> تفاصيل الحيوان
-                        </a>
+    .main-content-wrapper {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .info-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s;
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+</style>
+
+<div class="container mt-4">
+    <div class="main-content-wrapper shadow-lg">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <h2 class="fw-bold text-dark"><i class="bi bi-egg-fried text-warning"></i> تفاصيل سجل الإنتاج</h2>
+            <span class="badge bg-dark fs-6">رقم السجل: #@Model.Id</span>
+        </div>
+
+        <div class="row mt-4">
+            @* بطاقة بيانات الأبوين *@
+            <div class="col-md-6 mb-4">
+                <div class="card info-card shadow-sm border-0 h-100">
+                    <div class="card-header bg-dark text-white fw-bold py-3">
+                        <i class="bi bi-gender-ambiguous me-2"></i> بيانات الأبوين
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span><strong>الأنثى:</strong> @Model.FemaleAnimal?.Species (#@Model.FemaleAnimalId)</span>
-                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@Model.FemaleAnimalId" class="btn btn-sm btn-danger">
-                            <i class="bi bi-eye"></i> تفاصيل الحيوان
-                        </a>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded">
+                            <span><strong>الذكر:</strong> @Model.MaleAnimal?.Species <small class="text-muted">(#@Model.MaleAnimalId)</small></span>
+                            <a asp-controller="Animals" asp-action="Details" asp-route-id="@Model.MaleAnimalId" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> تفصيل
+                            </a>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded border-start border-danger border-3">
+                            <span><strong>الأنثى:</strong> @Model.FemaleAnimal?.Species <small class="text-muted">(#@Model.FemaleAnimalId)</small></span>
+                            <a asp-controller="Animals" asp-action="Details" asp-route-id="@Model.FemaleAnimalId" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-eye"></i> تفصيل
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* بطاقة بيانات الإنتاج والتواريخ *@
+            <div class="col-md-6 mb-4">
+                <div class="card info-card shadow-sm border-0 h-100">
+                    <div class="card-header bg-secondary text-white fw-bold py-3">
+                        <i class="bi bi-calendar-check me-2"></i> الجدول الزمني والحالة
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>حظيرة الإنتاج:</strong>
+                                <span class="badge bg-info text-dark shadow-sm">@Model.ProductionBarn?.Name</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>تاريخ الإدخال:</strong>
+                                <span class="text-muted">@Model.StartDate.ToString("yyyy/MM/dd HH:mm")</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>الإنتاج المتوقع:</strong>
+                                <span class="text-success fw-bold">@Model.ExpectedEndDate.ToString("yyyy/MM/dd HH:mm")</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>الحالة الحالية:</strong>
+                                <span class="badge @(Model.Status == "مكتملة" ? "bg-success" : "bg-warning text-dark") shadow-sm">
+                                    @Model.Status
+                                </span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-secondary text-white">بيانات الإنتاج والتواريخ</div>
-                <div class="card-body">
-                    <p><strong>حظيرة الإنتاج:</strong> <span class="badge bg-info text-dark">@Model.ProductionBarn?.Name</span></p>
-                    <p><strong>تاريخ الإدخال:</strong> <span class="text-muted">@Model.StartDate.ToString("yyyy/MM/dd HH:mm")</span></p>
-                    <p><strong>موعد الإنتاج المتوقع:</strong> <span class="text-success fw-bold">@Model.ExpectedEndDate.ToString("yyyy/MM/dd HH:mm")</span></p>
-                    <p><strong>الحالة الحالية:</strong> <span class="badge bg-warning text-dark">@Model.Status</span></p>
-                </div>
+        <hr />
+        <div class="d-flex gap-2 justify-content-end">
+            <div class="btn-group shadow-sm">
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning px-4">تعديل البيانات</a>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4">العودة للقائمة</a>
             </div>
         </div>
     </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>

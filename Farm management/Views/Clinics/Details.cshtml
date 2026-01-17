@@ -1,72 +1,82 @@
 ﻿@model Farm_management.Models.Clinic
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "تفاصيل الحالة المرضية";
 }
 
-<h1>Details</h1>
+<style>
+    body {
+        background-image: url('/css/images/imge8.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
 
-<div>
-    <h4>Clinic</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Animal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Animal.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Diagnosis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Diagnosis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Details)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Details)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Medications)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Medications)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DoseFrequency)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DoseFrequency)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EntryDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EntryDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Barn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Barn.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    .main-content-wrapper {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 40px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    dt {
+        color: #0d6efd;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="main-content-wrapper mx-auto" style="max-width: 900px;">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <h2 class="fw-bold"><i class="bi bi-info-circle"></i> تفاصيل الحالة الطبية</h2>
+            <span class="badge bg-danger fs-6">رقم الحالة: #@Model.Id</span>
+        </div>
+
+        <div class="row">
+            <dl class="row fs-5">
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Animal)</dt>
+                <dd class="col-sm-8 text-primary fw-bold">@Html.DisplayFor(model => model.Animal.Name)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Diagnosis)</dt>
+                <dd class="col-sm-8 text-danger">@Html.DisplayFor(model => model.Diagnosis)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Details)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Details)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Medications)</dt>
+                <dd class="col-sm-8 text-success">@Html.DisplayFor(model => model.Medications)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.DoseFrequency)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.DoseFrequency)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.EntryDate)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.EntryDate)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.EndDate)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.EndDate)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Barn)</dt>
+                <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Barn?.Name</span></dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Status)</dt>
+                <dd class="col-sm-8">
+                    <span class="badge bg-info text-dark">@Html.DisplayFor(model => model.Status)</span>
+                </dd>
+            </dl>
+        </div>
+
+        <hr />
+        <div class="d-flex gap-2 justify-content-end">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning shadow-sm">
+                تعديل البيانات
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary shadow-sm">
+                العودة للقائمة
+            </a>
+        </div>
+    </div>
 </div>

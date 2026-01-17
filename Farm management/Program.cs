@@ -1,4 +1,4 @@
-using Farm_management.Data;
+﻿using Farm_management.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

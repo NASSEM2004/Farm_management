@@ -1,65 +1,113 @@
 ﻿@{
     ViewData["Title"] = "لوحة التحكم المركزية";
-    // يتم استدعاء الـ Layout الافتراضي الذي يحتوي على الناف بار العام للمشروع
 }
 
-@* @section Styles {
-    <link rel="stylesheet" href="~/css/dashboard_style.css" />
-} *@
 <style>
-    /* إلغاء تأثير الهوفر (اللون الذي يتغير عند مرور الماوس) */
+    body {
+        /* استخدام صورة خلفية متسقة مع المشروع */
+        background-image: url('/css/images/imge10.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
+
+    /* الحاوية الشفافة المركزية */
+    .main-dashboard-wrapper {
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* تنسيق القائمة الجانبية لتناسب الشفافية */
+    .sidebar-custom {
+        background-color: rgba(248, 249, 250, 0.7) !important;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    /* إلغاء تأثير الهوفر كما طلبت */
     .btn-no-hover:hover {
-        background-color: #212529 !important; /* يحافظ على لون الـ btn-dark */
+        background-color: #212529 !important;
         border-color: #212529 !important;
-        cursor: default; /* اختياري: لجعل السهم لا يتغير ليد */
+        cursor: default;
     }
 
     .btn-danger.btn-no-hover:hover {
-        background-color: #bb2d3b !important; /* يحافظ على لون العيادة الأحمر */
+        background-color: #bb2d3b !important;
+    }
+
+    /* تنسيق الجداول داخل لوحة التحكم */
+    .table-container-custom {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
     }
 </style>
 
-<div class="container-fluid mt-3" style="direction: rtl;">
-    <div class="row">
-        <main class="col-md-10 px-4">
-            <div id="filter-container" class="mb-3 p-3 bg-white rounded shadow-sm d-flex gap-2 border">
-                <span id="filter-status" class="text-muted small">الفلاتر: </span>
-                <div id="dynamic-filters"></div>
-            </div>
+<div class="container-fluid">
+    <div class="main-dashboard-wrapper">
+        <div class="row" style="direction: rtl;">
 
-            <div class="card shadow-sm border-0">
-                <div class="table-responsive">
-                    <table class="table align-middle mb-0" id="main-data-table">
-                        <thead id="table-head" class="table-dark">
-                            <tr><th>يرجى اختيار قسم...</th></tr>
-                        </thead>
-                        <tbody id="table-body"></tbody>
-                    </table>
+            @* القسم الرئيسي للعرض *@
+            <main class="col-md-10 px-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="fw-bold text-dark"><i class="bi bi-speedometer2"></i> لوحة التحكم المركزية</h2>
                 </div>
-            </div>
-        </main>
 
-        <aside class="col-md-2 border-start bg-light p-3" style="min-height: 80vh;">
-            <h6 class="text-center mb-4 border-bottom pb-2">الأقسام</h6>
-            <div class="d-grid gap-2">
-                <button onclick="mainOrchestrator('barns')" class="btn btn-dark w-100 mb-2 text-center">
-                    الحظائر
-                </button>
+                <div id="filter-container" class="mb-3 p-3 bg-white rounded shadow-sm d-flex gap-2 border">
+                    <span id="filter-status" class="text-muted small">الفلاتر: </span>
+                    <div id="dynamic-filters"></div>
+                </div>
 
-                <button onclick="mainOrchestrator('animals')" class="btn btn-dark w-100 mb-2 text-center">
-                    الحيوانات
-                </button>
+                <div class="table-container-custom shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="main-data-table">
+                            <thead id="table-head" class="table-dark">
+                                <tr><th>يرجى اختيار قسم من القائمة الجانبية...</th></tr>
+                            </thead>
+                            <tbody id="table-body">
+                                @* البيانات تظهر هنا عبر الـ JavaScript *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
 
-                <button onclick="mainOrchestrator('hatchery')" class="btn btn-dark w-100 mb-2 d-flex align-items-center justify-content-center">
-                    <i class="bi bi-egg-fried me-2"></i>
-                    <span>قسم التفريخ</span>
-                </button>
-            </div>
-        </aside>
+            @* القائمة الجانبية *@
+            <aside class="col-md-2 sidebar-custom shadow-sm">
+                <h6 class="text-center mb-4 border-bottom pb-2 fw-bold text-primary">الأقسام</h6>
+                <div class="d-grid gap-3">
+                    <button onclick="mainOrchestrator('barns')" class="btn btn-dark w-100 shadow-sm">
+                        <i class="bi bi-house-door me-2"></i> الحظائر
+                    </button>
+
+                    <button onclick="mainOrchestrator('animals')" class="btn btn-dark w-100 shadow-sm">
+                        <i class="bi bi-bug me-2"></i> الحيوانات
+                    </button>
+
+                    <button onclick="mainOrchestrator('hatchery')" class="btn btn-dark w-100 d-flex align-items-center justify-content-center shadow-sm">
+                        <i class="bi bi-egg-fried me-2"></i>
+                        <span>قسم التفريخ</span>
+                    </button>
+
+                    <hr />
+
+                   @*  <a asp-controller="Clinic" asp-action="Index" class="btn btn-danger w-100 shadow-sm">
+                        <i class="bi bi-capsule me-2"></i> العيادة
+                    </a> *@
+                </div>
+            </aside>
+
+        </div>
     </div>
 </div>
+
 @section Scripts {
     <script src="~/js/farm_filters.js"></script>
-
     <script src="~/js/ui_controller.js"></script>
 }

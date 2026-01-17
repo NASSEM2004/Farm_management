@@ -1,97 +1,143 @@
 ﻿@model Farm_management.Models.Barns
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "تعديل الحظيرة والحيوانات";
 }
 
-<h1>Edit</h1>
+<style>
+    body {
+        background-image: url('/css/images/imge22.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
 
-<h4>Barns</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="kindOfLife" class="control-label"></label>
-                <input asp-for="kindOfLife" class="form-control" />
-                <span asp-validation-for="kindOfLife" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Capacity" class="control-label"></label>
-                <input asp-for="Capacity" class="form-control" />
-                <span asp-validation-for="Capacity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    .main-container {
+        backdrop-filter: blur(12px);
+        background-color: rgba(255, 255, 255, 0.88);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+
+    .section-divider {
+        border-top: 2px dashed #ffc107;
+        margin: 40px 0;
+    }
+</style>
+
+<div class="container mt-4 main-container">
+    @* --- قسم تعديل بيانات الحظيرة --- *@
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-warning text-dark p-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i> تعديل بيانات الحظيرة: @Model.Name</h4>
+            <a asp-action="Index" class="btn btn-sm btn-outline-dark">العودة للقائمة</a>
+        </div>
+
+        <div class="card-body bg-light">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="Name" class="form-label fw-bold">اسم الحظيرة</label>
+                        <input asp-for="Name" class="form-control border-warning" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="kindOfLife" class="form-label fw-bold">تخصص الحظيرة (نوع الحياة)</label>
+                        <input asp-for="kindOfLife" class="form-control border-warning" />
+                        <span asp-validation-for="kindOfLife" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Capacity" class="form-label fw-bold">السعة الاستيعابية</label>
+                        <div class="input-group">
+                            <input asp-for="Capacity" class="form-control border-warning" type="number" />
+                            <span class="input-group-text bg-warning border-warning text-dark">حيوان</span>
+                        </div>
+                        <span asp-validation-for="Capacity" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-start border-top pt-3">
+                    <button type="submit" class="btn btn-warning px-5 shadow fw-bold">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    @* --- فاصل القسم --- *@
+    <div class="section-divider"></div>
 
-<hr />
-<div class="mt-5">
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-table me-2"></i> قائمة الحيوانات في هذه الحظيرة</h5>
-            <span class="badge bg-light text-dark">العدد الإجمالي: @Model.Animals.Count</span>
+    
+@* --- قسم قائمة الحيوانات التابعة لهذه الحظيرة --- *@
+    <div class="card border-0 shadow-lg overflow-hidden">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center p-3">
+            <h5 class="mb-0"><i class="bi bi-table me-2"></i> قائمة الحيوانات المقيمة حالياً</h5>
+            <div class="d-flex gap-2 align-items-center">
+                <span class="badge bg-light text-dark px-3 py-2">الإجمالي: @Model.Animals.Count / @Model.Capacity</span>
+            </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 10%"># الرقم</th>
-                        <th>الاسم</th>
-                        <th>النوع</th>
-                        <th>الجنس</th>
-                        <th>العمر (شهر)</th>
-                        <th class="text-center">إدارة الحيوان</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var animal in Model.Animals)
-                    {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
                         <tr>
-                            <td><span class="fw-bold">@animal.Id</span></td>
-                            <td>@animal.Name</td>
-                            <td><span class="badge bg-info text-dark">@animal.Species</span></td>
-                            <td>@animal.Gender</td>
-                            <td>@animal.Age</td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a asp-controller="Animals" asp-action="Edit" asp-route-id="@animal.Id"
-                                       class="btn btn-sm btn-outline-warning" title="تعديل">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                    <a asp-controller="Animals" asp-action="Details" asp-route-id="@animal.Id"
-                                       class="btn btn-sm btn-outline-primary" title="عرض">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                </div>
-                            </td>
+                            <th class="ps-3"># الرقم</th>
+                            <th>الاسم</th>
+                            <th>الفصيلة</th>
+                            <th>الجنس</th>
+                            <th>العمر (أشهر)</th>
+                            <th class="text-center">إدارة الحيوان</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var animal in Model.Animals)
+                        {
+                            <tr>
+                                <td class="ps-3"><span class="fw-bold text-primary">@animal.Id</span></td>
+                                <td class="fw-bold">@animal.Name</td>
+                                <td><span class="badge bg-info text-dark">@animal.Species</span></td>
+                                <td>
+                                    @if (animal.Gender == "ذكر")
+                                    {
+                                        <i class="bi bi-gender-male text-primary"></i>
+                                    }
+                                    else
+                                    {
+
+                                        <i class="bi bi-gender-female text-danger"></i>
+                                    }
+                                    @animal.Gender
+                                </td>
+                                <td>@animal.Age شهر</td>
+                                <td class="text-center">
+                                    @* تم تعديل ستايل الأزرار هنا لتصبح ممتلئة ومتناسقة *@
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-controller="Animals" asp-action="Edit" asp-route-id="@animal.Id"
+                                           class="btn btn-warning btn-sm shadow-sm px-3 fw-bold" title="تعديل">
+                                            <i class="bi bi-pencil-fill me-1"></i> تعديل
+                                        </a>
+                                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@animal.Id"
+                                           class="btn btn-primary btn-sm shadow-sm px-3 fw-bold" title="عرض التفاصيل">
+                                            <i class="bi bi-eye-fill me-1"></i> عرض
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="mt-3">
-        <p class="text-muted small">
-            <i class="bi bi-info-circle"></i> لتغيير حظيرة حيوان معين، يرجى الضغط على زر التعديل الخاص بالحيوان.
-        </p>
-    </div>
-</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

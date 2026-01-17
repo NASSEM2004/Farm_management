@@ -1,91 +1,120 @@
 ﻿@model Farm_management.Models.Barns
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "تفاصيل الحظيرة";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Barns</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.kindOfLife)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.kindOfLife)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Capacity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Capacity)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<hr />
-<div class="mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="text-dark fw-bold">
-            <i class="bi bi-grid-3x3-gap-fill text-primary"></i> الحيوانات المقيمة حالياً
-        </h4>
-        <span class="badge bg-secondary">إجمالي العدد: @Model.Animals.Count</span>
-    </div>
-
-    <div class="row">
-        @foreach (var animal in Model.Animals)
-        {
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card h-100 shadow-sm border-0 hover-card">
-                    <div class="card-header bg-white border-0 pb-0 d-flex justify-content-between">
-                        <span class="badge bg-dark"># @animal.Id</span>
-                        <span class="text-muted small"><i class="bi bi-gender-ambiguous"></i> @animal.Gender</span>
-                    </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-1 text-primary">@animal.Name</h5>
-                        <p class="card-text mb-1"><strong>النوع:</strong> @animal.Species</p>
-                        <p class="card-text text-muted"><strong>العمر:</strong> @animal.Age شهر</p>
-                    </div>
-
-                    <div class="card-footer bg-light border-0 d-flex justify-content-around py-3">
-                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@animal.Id"
-                           class="btn btn-sm btn-outline-info" title="عرض">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        <a asp-controller="Animals" asp-action="Edit" asp-route-id="@animal.Id"
-                           class="btn btn-sm btn-outline-warning" title="تعديل">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <a asp-controller="Animals" asp-action="Delete" asp-route-id="@animal.Id"
-                           class="btn btn-sm btn-outline-danger" title="حذف">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</div>
-
 <style>
-    .hover-card {
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    body {
+        background-image: url('/css/images/imge5.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
     }
 
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
+    .main-content-wrapper {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    dt {
+        color: #0d6efd;
+        font-weight: bold;
+    }
 </style>
+
+<div class="container mt-4">
+    <div class="main-content-wrapper shadow-lg">
+        @* القسم العلوي: معلومات الحظيرة *@
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <h2 class="fw-bold"><i class="bi bi-house-door-fill"></i> تفاصيل الحظيرة</h2>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning shadow-sm">
+                    <i class="bi bi-pencil-square"></i> تعديل الحظيرة
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary shadow-sm">
+                    <i class="bi bi-arrow-left-circle"></i> العودة للقائمة
+                </a>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <dl class="row fs-5">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Name)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.kindOfLife)</dt>
+                <dd class="col-sm-9"><span class="badge bg-info text-dark">@Html.DisplayFor(model => model.kindOfLife)</span></dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Capacity)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Capacity) حيوان</dd>
+            </dl>
+        </div>
+
+        <hr />
+
+        @* القسم السفلي: جدول الحيوانات *@
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-dark fw-bold">
+                    <i class="bi bi-grid-3x3-gap-fill text-primary"></i> الحيوانات المقيمة حالياً
+                </h4>
+                <span class="badge bg-dark fs-6">إجمالي العدد: @Model.Animals.Count</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle bg-white rounded overflow-hidden shadow-sm">
+                    <thead class="table-dark">
+                        <tr>
+                            <th># ID</th>
+                            <th>الاسم</th>
+                            <th>النوع</th>
+                            <th>العمر</th>
+                            <th>الجنس</th>
+                            <th class="text-center">العمليات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var animal in Model.Animals)
+                        {
+                            <tr>
+                                <td class="fw-bold text-primary">#@animal.Id</td>
+                                <td>@animal.Name</td>
+                                <td>@animal.Species</td>
+                                <td>@animal.Age شهر</td>
+                                <td>
+                                    @if (animal.Gender == "ذكر")
+                                    {
+                                        <span class="badge bg-info text-dark">@animal.Gender</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger text-white">@animal.Gender</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a asp-controller="Animals" asp-action="Edit" asp-route-id="@animal.Id" class="btn btn-sm btn-outline-warning">تعديل</a>
+                                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@animal.Id" class="btn btn-sm btn-outline-info">تفاصيل</a>
+                                        <a asp-controller="Animals" asp-action="Delete" asp-route-id="@animal.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Animals.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">لا يوجد حيوانات في هذه الحظيرة حالياً.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

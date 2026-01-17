@@ -1,44 +1,103 @@
 ﻿@model Farm_management.Models.Barns
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "إضافة حظيرة جديدة";
 }
 
-<h1>Create</h1>
+<style>
+    body {
+        background-image: url('/css/images/imge23.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
 
-<h4>Barns</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="kindOfLife" class="control-label"></label>
-                <input asp-for="kindOfLife" class="form-control" />
-                <span asp-validation-for="kindOfLife" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Capacity" class="control-label"></label>
-                <input asp-for="Capacity" class="form-control" />
-                <span asp-validation-for="Capacity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    .main-container {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25 darkblue;
+    }
+</style>
+
+<div class="container main-container">
+    <div class="card shadow-lg border-0">
+        @* رأس البطاقة باللون الأزرق للإضافة *@
+        <div class="card-header bg-primary text-white p-3">
+            <h4 class="mb-0 fw-bold">
+                <i class="bi bi-plus-circle-dotted me-2"></i> تعريف حظيرة جديدة في النظام
+            </h4>
+        </div>
+
+        <div class="card-body bg-light p-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row g-4">
+                    @* حقل اسم الحظيرة *@
+                    <div class="col-md-4">
+                        <label asp-for="Name" class="form-label fw-bold">اسم الحظيرة</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-house-door"></i></span>
+                            <input asp-for="Name" class="form-control border-primary" placeholder="مثلاً: حظيرة (أ) القسم الشرقي" />
+                        </div>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    @* حقل تخصص الحظيرة *@
+                    <div class="col-md-4">
+                        <label asp-for="kindOfLife" class="form-label fw-bold">تخصص الحظيرة (نوع الحياة)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-tags"></i></span>
+                            <input asp-for="kindOfLife" class="form-control border-primary" placeholder="مثلاً: تسمين، إنتاج، عزل..." />
+                        </div>
+                        <span asp-validation-for="kindOfLife" class="text-danger small"></span>
+                    </div>
+
+                    @* حقل السعة الاستيعابية *@
+                    <div class="col-md-4">
+                        <label asp-for="Capacity" class="form-label fw-bold">السعة الاستيعابية القصوى</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-people"></i></span>
+                            <input asp-for="Capacity" class="form-control border-primary text-center fw-bold" type="number" placeholder="0" />
+                            <span class="input-group-text bg-white border-primary">رأس</span>
+                        </div>
+                        <span asp-validation-for="Capacity" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                @* تنبيه ذكي أسفل الحقول *@
+                <div class="alert alert-info mt-4 d-flex align-items-center shadow-sm border-0 border-start border-4 border-info">
+                    <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                    <div>
+                        تأكد من دقة <strong>السعة الاستيعابية</strong>؛ حيث لن يسمح النظام بنقل حيوانات إضافية لهذه الحظيرة بمجرد وصولها للعدد المحدد هنا.
+                    </div>
+                </div>
+
+                @* أزرار التحكم *@
+                <div class="form-group mt-4 text-end border-top pt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 me-2">
+                        <i class="bi bi-x-circle me-1"></i> إلغاء
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow fw-bold">
+                        <i class="bi bi-check-lg me-1"></i> إضافة الحظيرة الآن
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
-

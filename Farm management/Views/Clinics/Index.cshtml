@@ -1,63 +1,92 @@
 ﻿@model IEnumerable<Farm_management.Models.Clinic>
 
-<div class="container-fluid mt-4">
+@{
+    ViewData["Title"] = "إدارة العيادة";
+}
+
+<style>
+    body {
+        background-image: url('/css/images/imge7.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
+
+    /* الحاوية بنفس شفافية وظلال التصميم الأول */
+    .container-fluid.mt-4 {
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(5px);
+    }
+</style>
+
+<div class="container-fluid mt-4 shadow-sm">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-danger fw-bold"><i class="bi bi-capsule"></i> إدارة العيادة البيطرية</h2>
-        <a asp-action="Create" class="btn btn-danger shadow-sm px-4">
-            <i class="bi bi-plus-lg"></i> تسجيل حالة مرضية
+        <h2 class="fw-bold"><i class="bi bi-capsule"></i> إدارة العيادة البيطرية</h2>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-circle"></i> تسجيل حالة مرضية
         </a>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-striped table-hover mb-0 align-middle text-center">
-                <thead class="table-dark">
-                    <tr>
-                        <th>رقم الحالة</th>
-                        <th>رقم الحيوان</th>
-                        <th>النوع</th>
-                        <th>المرض (التشخيص)</th>
-                        <th>الدواء الموصوف</th>
-                        <th>تاريخ الدخول</th>
-                        <th>تاريخ الخروج</th>
-                        <th>الحظيرة الحالية</th>
-                        <th>ملف الحيوان</th>
-                        <th>التحكم</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td class="fw-bold">#@item.Id</td>
-                            <td><span class="badge bg-light text-dark border">@item.AnimalId</span></td>
-                            <td>@item.Animal?.Species</td>
-                            <td class="text-danger fw-bold">@item.Diagnosis</td>
-                            <td>@item.Medications</td>
-                            <td>@item.EntryDate.ToShortDateString()</td>
-                            <td>@item.EndDate.ToShortDateString()</td>
-                            <td>
-                                <span class="badge bg-info text-dark">
-                                    <i class="bi bi-house-door"></i> @item.Barn?.Name
-                                </span>
-                            </td>
-                            <td>
-                                <a asp-controller="Animals" asp-action="Details" asp-route-id="@item.AnimalId"
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-info-circle"></i> ملف الحيوان
-                                </a>
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="تعديل"><i class="bi bi-pencil"></i></a>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" title="تفاصيل الحالة"><i class="bi bi-list-ul"></i></a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="حذف"><i class="bi bi-trash"></i></a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <table class="table table-hover align-middle shadow-sm bg-white rounded overflow-hidden text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>رقم الحالة</th>
+                <th>رقم الحيوان</th>
+                <th>النوع</th>
+                <th>المرض (التشخيص)</th>
+                <th>الدواء الموصوف</th>
+                <th>تاريخ الدخول</th>
+                <th>تاريخ الخروج</th>
+                <th>الحظيرة الحالية</th>
+                <th>ملف الحيوان</th>
+                <th class="text-center">العمليات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="fw-bold text-primary">
+                        #@item.Id
+                    </td>
+                    <td>
+                        @item.AnimalId
+                    </td>
+                    <td>
+                        @item.Animal?.Species
+                    </td>
+                    <td class="text-danger fw-bold">
+                        @item.Diagnosis
+                    </td>
+                    <td>
+                        @item.Medications
+                    </td>
+                    <td>
+                        @item.EntryDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @item.EndDate.ToShortDateString()
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary">@item.Barn?.Name</span>
+                    </td>
+                    <td>
+                        <a asp-controller="Animals" asp-action="Details" asp-route-id="@item.AnimalId" class="btn btn-sm btn-outline-info">
+                         تفصيل 
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">تعديل</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">تفاصيل</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

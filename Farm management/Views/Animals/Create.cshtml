@@ -1,76 +1,134 @@
 ﻿@model Farm_management.Models.Animals
 
 @{
-    ViewData["Title"] = "إضافة حيوان";
+    ViewData["Title"] = "إضافة حيوان جديد";
 }
 
-<h2>إضافة حيوان جديد</h2>
+<style>
+    body {
+        background-image: url('/css/images/imge19.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+    .main-container {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.88);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
 
-    <div asp-validation-summary="ModelOnly" style="color:red;"></div>
+    .form-section-title {
+        border-right: 4px solid #0d6efd;
+        padding-right: 15px;
+        margin-bottom: 20px;
+        color: #0d6efd;
+        font-weight: bold;
+    }
+</style>
 
-    <div>
-        <label asp-for="Name">الاسم (النوع)</label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name" style="color:red;"></span>
+<div class="container main-container">
+    <div class="card shadow-lg border-0">
+        @* الهيدر باللون الأزرق للإضافة *@
+        <div class="card-header bg-primary text-white p-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-plus-circle me-2"></i> تسجيل حيوان جديد في النظام</h4>
+        </div>
+
+        <div class="card-body bg-light p-4">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    @* القسم الأول: معلومات النوع والفصيلة *@
+                    <div class="col-md-6 mb-4">
+                        <h5 class="form-section-title">المعلومات الأساسية</h5>
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">الاسم (النوع)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white"><i class="bi bi-tag"></i></span>
+                                <input asp-for="Name" class="form-control border-primary" placeholder="مثلاً: خروف، بقرة، ماعز..." id="NameInput" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                            <div class="form-text text-muted small mt-1">سيتم البحث عن الحظائر المناسبة بمجرد كتابة النوع.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Species" class="form-label fw-bold">الفصيلة / السلالة</label>
+                            <input asp-for="Species" class="form-control border-primary shadow-sm" placeholder="مثلاً: نعيمي، هولشتاين..." />
+                            <span asp-validation-for="Species" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    @* القسم الثاني: العمر والجنس والحظيرة *@
+                    <div class="col-md-6 mb-4">
+                        <h5 class="form-section-title">البيانات الحيوية والموقع</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Age" class="form-label fw-bold">العمر (بالأشهر)</label>
+                                <input asp-for="Age" class="form-control border-primary shadow-sm text-center fw-bold" type="number" placeholder="0" />
+                                <span asp-validation-for="Age" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Gender" class="form-label fw-bold">الجنس</label>
+                                <select asp-for="Gender" class="form-select border-primary shadow-sm">
+                                    <option value="">-- اختر --</option>
+                                    <option value="ذكر">ذكر</option>
+                                    <option value="أنثى">أنثى</option>
+                                </select>
+                                <span asp-validation-for="Gender" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BarnId" class="form-label fw-bold">تسكين الحيوان (الحظيرة)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white"><i class="bi bi-house-door"></i></span>
+                                <select asp-for="BarnId" class="form-select border-primary fw-bold" asp-items="ViewBag.BarnId">
+                                    <option value="">-- اختر النوع أولاً --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="BarnId" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                @* أزرار التحكم الموحدة *@
+                <div class="form-group mt-3 text-end border-top pt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 me-2 shadow-sm">
+                        <i class="bi bi-x-circle me-1"></i> إلغاء
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow fw-bold">
+                        <i class="bi bi-check-circle me-1"></i> حفظ البيانات
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div>
-        <label asp-for="Species">الفصيلة</label>
-        <input asp-for="Species" />
-        <span asp-validation-for="Species" style="color:red;"></span>
-    </div>
-
-    <div>
-        <label asp-for="Age">العمر</label>
-        <input asp-for="Age" type="number" />
-        <span asp-validation-for="Age" style="color:red;"></span>
-    </div>
-
-    <div>
-        <label asp-for="Gender">الجنس</label>
-        <select asp-for="Gender">
-            <option value="">-- اختر الجنس --</option>
-            <option value="ذكر">ذكر</option>
-            <option value="أنثى">أنثى</option>
-        </select>
-        <span asp-validation-for="Gender" style="color:red;"></span>
-    </div>
-
-    <div>
-        <label asp-for="BarnId">الحظيرة</label>
-        <select asp-for="BarnId" asp-items="ViewBag.BarnId">
-            <option value="">-- اختر الحظيرة --</option>
-        </select>
-        <span asp-validation-for="BarnId" style="color:red;"></span>
-    </div>
-
-    <br />
-    <button type="submit">حفظ البيانات</button>
-</form>
+</div>
 
 @section Scripts {
     <script>
-        // هذا السكربت يراقب تغيير "الاسم/النوع" ويجلب الحظائر المتوافقة
-        document.getElementById('Name').addEventListener('blur', function () {
-            const kindValue = this.value; // القيمة المدخلة في حقل الاسم (مثلاً: خروف)
-            const barnSelect = document.querySelector('select[name="BarnId"]');
+        // السكربت الذكي لجلب الحظائر المتوافقة
+        document.getElementById('NameInput').addEventListener('blur', function () {
+            const kindValue = this.value;
+            const barnSelect = document.getElementById('BarnId');
 
             if (!kindValue) return;
 
-            // إظهار رسالة مؤقتة
             barnSelect.innerHTML = '<option value="">جاري البحث عن حظائر متاحة...</option>';
 
-            // استدعاء الأكشن الذكي GetBarnsByKind من AnimalsController
             fetch(`/Animals/GetBarnsByKind?kind=${encodeURIComponent(kindValue)}`)
                 .then(res => res.json())
                 .then(data => {
                     barnSelect.innerHTML = '<option value="">-- اختر حظيرة مناسبة --</option>';
 
                     if (data.length === 0) {
-                        barnSelect.innerHTML = '<option value="">لا توجد حظائر متوافقة مع هذا النوع</option>';
+                        barnSelect.innerHTML = '<option value="">لا توجد حظائر متوافقة مع (' + kindValue + ')</option>';
                     } else {
                         data.forEach(barn => {
                             const option = document.createElement('option');
@@ -81,7 +139,7 @@
                     }
                 })
                 .catch(err => {
-                    console.error("خطأ في جلب البيانات:", err);
+                    console.error("خطأ:", err);
                     barnSelect.innerHTML = '<option value="">خطأ في تحميل الحظائر</option>';
                 });
         });

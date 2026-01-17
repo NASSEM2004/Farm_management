@@ -1,53 +1,104 @@
 ﻿@model Farm_management.Models.Hatchery
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "تعديل سجل التفريخ";
 }
 
-<h1>Edit</h1>
+<style>
+    body {
+        background-image: url('/css/images/imge19.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
 
-<h4>Hatchery</h4>
-<hr />
-<div class="row">
-    <div class="card border-0 shadow-sm p-4 bg-light">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label class="form-label fw-bold text-primary">الذكر (رقم الحيوان)</label>
-                <div class="input-group">
-                    <input asp-for="MaleAnimalId" class="form-control bg-white" readonly />
-                    <a id="btnLinkMale" asp-controller="Animals" asp-action="Details" asp-route-id="@Model.MaleAnimalId" class="btn btn-primary">
-                        <i class="bi bi-search"></i> التفاصيل
-                    </a>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold text-danger">الأنثى (رقم الحيوان)</label>
-                <div class="input-group">
-                    <input asp-for="FemaleAnimalId" class="form-control bg-white" readonly />
-                    <a id="btnLinkFemale" asp-controller="Animals" asp-action="Details" asp-route-id="@Model.FemaleAnimalId" class="btn btn-danger">
-                        <i class="bi bi-search"></i> التفاصيل
-                    </a>
-                </div>
-            </div>
+    .main-container {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        padding: 20px;
+    }
+</style>
+
+<div class="container mt-4 main-container">
+    <div class="card shadow-lg border-0">
+        @* الهيدر باللون التحذيري للتعديل *@
+        <div class="card-header bg-warning text-dark p-3">
+            <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>تعديل بيانات عملية التفريخ - سجل #@Model.Id</h4>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label asp-for="ProductionBarnId" class="form-label fw-bold">حظيرة الإنتاج</label>
-                <select asp-for="ProductionBarnId" class="form-select border-2" asp-items="ViewBag.ProductionBarnId"></select>
-            </div>
-            <div class="col-md-4">
-                <label asp-for="StartDate" class="form-label fw-bold">وقت الإدخال</label>
-                <input asp-for="StartDate" class="form-control" />
-            </div>
-            <div class="col-md-4">
-                <label asp-for="ExpectedEndDate" class="form-label fw-bold">موعد الإنتاج المتوقع</label>
-                <input asp-for="ExpectedEndDate" class="form-control fw-bold text-success" />
-            </div>
+        <div class="card-body bg-light">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                @* قسم الأبوين مع ميزة عرض التفاصيل *@
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-primary">الذكر (رقم الحيوان)</label>
+                        <div class="input-group shadow-sm">
+                            <input asp-for="MaleAnimalId" class="form-control bg-white border-primary" readonly />
+                            <a id="btnLinkMale" asp-controller="Animals" asp-action="Details" asp-route-id="@Model.MaleAnimalId" class="btn btn-primary">
+                                <i class="bi bi-search"></i> التفاصيل
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-danger">الأنثى (رقم الحيوان)</label>
+                        <div class="input-group shadow-sm">
+                            <input asp-for="FemaleAnimalId" class="form-control bg-white border-danger" readonly />
+                            <a id="btnLinkFemale" asp-controller="Animals" asp-action="Details" asp-route-id="@Model.FemaleAnimalId" class="btn btn-danger">
+                                <i class="bi bi-search"></i> التفاصيل
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                @* قسم الحظيرة والتواريخ *@
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="ProductionBarnId" class="form-label fw-bold">حظيرة الإنتاج</label>
+                        <select asp-for="ProductionBarnId" class="form-select border-warning shadow-sm" asp-items="ViewBag.ProductionBarnId"></select>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="StartDate" class="form-label fw-bold">وقت الإدخال</label>
+                        <input asp-for="StartDate" class="form-control border-warning shadow-sm" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="p-2 bg-white rounded border-start border-4 border-success shadow-sm">
+                            <label asp-for="ExpectedEndDate" class="form-label fw-bold text-success">موعد الإنتاج المتوقع</label>
+                            <input asp-for="ExpectedEndDate" class="form-control fw-bold border-success text-success" />
+                        </div>
+                    </div>
+                </div>
+
+                @* إضافة حقل الحالة لضمان إمكانية تحديثها عند التعديل *@
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label asp-for="Status" class="form-label fw-bold">حالة السجل</label>
+                        <select asp-for="Status" class="form-select border-warning shadow-sm">
+                            <option value="جارية">جارية</option>
+                            <option value="مكتملة">مكتملة</option>
+                            <option value="قيد الانتظار">قيد الانتظار</option>
+                            <option value="فاشلة">فاشلة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4 text-end border-top pt-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 me-2">إلغاء</a>
+                    <button type="submit" class="btn btn-warning btn-lg px-5 shadow fw-bold">تحديث البيانات</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
