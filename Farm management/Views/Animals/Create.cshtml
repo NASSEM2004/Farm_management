@@ -1,68 +1,92 @@
-﻿@{
-    ViewData["Title"] = "لوحة التحكم";
+﻿@model Farm_management.Models.Animals
+
+@{
+    ViewData["Title"] = "إضافة حيوان";
 }
 
-<div class="container-fluid mt-3">
-    <div class="row" style="min-height: 85vh;">
+<h2>إضافة حيوان جديد</h2>
 
-        <div class="col-md-2 bg-dark rounded p-3 text-white shadow">
-            <h5 class="text-center mb-4 border-bottom pb-2">الأقسام</h5>
-            <div class="d-grid gap-2">
-                <button onclick="loadSection('barns')" class="btn btn-outline-light border-0 text-start">
-                    <i class="bi bi-door-open"></i> الحظائر
-                </button>
-                <button onclick="loadSection('animals')" class="btn btn-outline-light border-0 text-start">
-                    <i class="bi bi-pigeon"></i> الحيوانات
-                </button>
-                <button onclick="loadSection('hatchery')" class="btn btn-outline-light border-0 text-start">
-                    <i class="bi bi-egg"></i> التفريخ
-                </button>
-                <button onclick="loadSection('clinic')" class="btn btn-outline-danger border-0 text-start text-danger">
-                    <i class="bi bi-heart-pulse"></i> العيادة
-                </button>
-            </div>
-        </div>
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
 
-        <div class="col-md-10 px-4">
-            <div id="filter-container" class="mb-3 p-3 bg-white rounded shadow-sm d-flex gap-2">
-                <span class="text-muted">اختر قسماً لعرض أزرار الفلترة...</span>
-            </div>
+    <div asp-validation-summary="ModelOnly" style="color:red;"></div>
 
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead id="table-head" class="table-dark">
-                            <tr><th>يرجى اختيار قسم من القائمة اليمنى</th></tr>
-                        </thead>
-                        <tbody id="table-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
+    <div>
+        <label asp-for="Name">الاسم (النوع)</label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" style="color:red;"></span>
     </div>
-</div>
+
+    <div>
+        <label asp-for="Species">الفصيلة</label>
+        <input asp-for="Species" />
+        <span asp-validation-for="Species" style="color:red;"></span>
+    </div>
+
+    <div>
+        <label asp-for="Age">العمر</label>
+        <input asp-for="Age" type="number" />
+        <span asp-validation-for="Age" style="color:red;"></span>
+    </div>
+
+    <div>
+        <label asp-for="Gender">الجنس</label>
+        <select asp-for="Gender">
+            <option value="">-- اختر الجنس --</option>
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
+        </select>
+        <span asp-validation-for="Gender" style="color:red;"></span>
+    </div>
+
+    <div>
+        <label asp-for="BarnId">الحظيرة</label>
+        <select asp-for="BarnId" asp-items="ViewBag.BarnId">
+            <option value="">-- اختر الحظيرة --</option>
+        </select>
+        <span asp-validation-for="BarnId" style="color:red;"></span>
+    </div>
+
+    <br />
+    <button type="submit">حفظ البيانات</button>
+</form>
 
 @section Scripts {
     <script>
-        // دالة لجلب البيانات من الـ FarmData API وتحديث الجدول
-        async function loadSection(section) {
-            const head = document.getElementById('table-head');
-            const body = document.getElementById('table-body');
-            const filters = document.getElementById('filter-container');
+        // هذا السكربت يراقب تغيير "الاسم/النوع" ويجلب الحظائر المتوافقة
+        document.getElementById('Name').addEventListener('blur', function () {
+            const kindValue = this.value; // القيمة المدخلة في حقل الاسم (مثلاً: خروف)
+            const barnSelect = document.querySelector('select[name="BarnId"]');
 
-            // طلب البيانات من الـ API
-            const res = await fetch(`/api/FarmData/${section}`);
-            const data = await res.json();
+            if (!kindValue) return;
 
-            // بناء الجدول حسب القسم
-            if (section === 'barns') {
-                filters.innerHTML = '<button class="btn btn-sm btn-secondary">فلترة حسب السعة</button>';
-                head.innerHTML = '<tr><th>رقم</th><th>الاسم</th><th>السعة</th></tr>';
-                body.innerHTML = data.map(b => `<tr><td>A${b.id}</td><td>${b.name}</td><td>${b.capacity}</td></tr>`).join('');
-            }
-            // سنكمل بقية الأقسام (animals, clinic...) بنفس الطريقة
-        }
+            // إظهار رسالة مؤقتة
+            barnSelect.innerHTML = '<option value="">جاري البحث عن حظائر متاحة...</option>';
+
+            // استدعاء الأكشن الذكي GetBarnsByKind من AnimalsController
+            fetch(`/Animals/GetBarnsByKind?kind=${encodeURIComponent(kindValue)}`)
+                .then(res => res.json())
+                .then(data => {
+                    barnSelect.innerHTML = '<option value="">-- اختر حظيرة مناسبة --</option>';
+
+                    if (data.length === 0) {
+                        barnSelect.innerHTML = '<option value="">لا توجد حظائر متوافقة مع هذا النوع</option>';
+                    } else {
+                        data.forEach(barn => {
+                            const option = document.createElement('option');
+                            option.value = barn.id;
+                            option.textContent = barn.name;
+                            barnSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("خطأ في جلب البيانات:", err);
+                    barnSelect.innerHTML = '<option value="">خطأ في تحميل الحظائر</option>';
+                });
+        });
     </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
